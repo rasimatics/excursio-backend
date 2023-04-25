@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+    web:
+        container_name: account_web
+        build: .
+        command: bash -c "gunicorn app.main:app -w 4 -k uvicorn.workers.UvicornWorker -b "0.0.0.0:1992""
+        environment:
+          - ENV=prod
+        volumes:
+          - .:/app
+          - /home/developer/projects_logs:/var/log
+        ports:
+          - 1992:1992
+        restart: always
