@@ -13,9 +13,9 @@ BASE_DIR = project_root_absolute.parent.parent
 
 
 class BaseSettings(Settings):
-    title: str = "Account microservice"
+    title: str = "Backend"
     version: str = "1.0.0"
-    description: str = "Account microservice"
+    description: str = "Backend"
     docs_url: str = "/docs"
     
     PREFIX: str = ""

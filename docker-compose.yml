@@ -1,12 +1,12 @@
 version: '3.8'
 
 services:
-    account_database:
-        container_name: account_database
+    database:
+        container_name: backend_db
         image: postgres:13-alpine
         restart: always
         volumes:
-          - rocweb_account_data:/var/lib/postgresql/data
+          - db_data:/var/lib/postgresql/data
         ports:
           - 5434:5432
         environment:
@@ -14,8 +14,8 @@ services:
         env_file:
           - ./.env.dev
       
-    account_web:
-        container_name: account_web
+    web:
+        container_name: backend_web
         build: .
         command: bash -c "uvicorn app.main:app --reload --host 0.0.0.0 --port 8003"
         environment:
@@ -28,4 +28,4 @@ services:
         restart: always
 
 volumes:
-  rocweb_account_data:
+  db_data:

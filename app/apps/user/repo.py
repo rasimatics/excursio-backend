@@ -25,7 +25,6 @@ class UserRepo(BaseSqlalchemyRepo):
             Get user by id
         """
         stmt = select(self.model) \
-                    .options(selectinload(self.model.permissions))\
                     .options(selectinload(self.model.role))\
                     .where(self.model.id == id)
         result = await db_session.execute(stmt)
@@ -35,14 +34,13 @@ class UserRepo(BaseSqlalchemyRepo):
             raise RepoException("User not found", None, status=404)
         return obj
     
-    async def get_by_username(self, db_session, username):
+    async def get_by_email(self, db_session, email):
         """
             Get user by username
         """
         stmt = select(self.model)\
-                .options(selectinload(self.model.permissions))\
                 .options(selectinload(self.model.role))\
-                .where(self.model.user_id == username)
+                .where(self.model.email == email)
         result = await db_session.execute(stmt)
         return result.scalars().one_or_none()
 
@@ -52,7 +50,6 @@ class UserRepo(BaseSqlalchemyRepo):
             Get all users
         """
         stmt = select(self.model)\
-                .options(selectinload(self.model.permissions))\
                 .options(selectinload(self.model.role))
         result = await db_session.execute(stmt)
         return result.scalars().all()

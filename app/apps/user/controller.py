@@ -17,17 +17,15 @@ auth_router = APIRouter(prefix="/auth", tags=["Auth"])
 @auth_router.post("/login")
 @inject
 async def login(
-    request: Request,
     user_data: UserLogin,
     response: FastAPIResponse,
     db_session = Depends(get_db),
     user_service = Depends(Provide[UserContainer.user_service])
 ) -> Response[TokenOut]:
     
-    user: UserOut = await user_service.authenticate_user(db_session, user_data.username, user_data.password)
-    await user_service.update_after_login(db_session, user.id, request.client)
-    
-    token_data = TokenDataOut(**{**user.dict(), "role": user.get_role(), "permissions":user.get_permissions()})
+    user: UserOut = await user_service.authenticate_user(db_session, user_data.email, user_data.password)
+
+    token_data = TokenDataOut(**{**user.dict(), "role": user.get_role()})
     access_token = create_access_token(data=token_data.dict())
     response.set_cookie(key="access_token", value=f"Bearer {access_token}")
     
