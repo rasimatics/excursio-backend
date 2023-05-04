@@ -24,11 +24,8 @@ async def login(
 ) -> Response[TokenOut]:
     
     user: UserOut = await user_service.authenticate_user(db_session, user_data.email, user_data.password)
-
     token_data = TokenDataOut(**{**user.dict(), "role": user.get_role()})
     access_token = create_access_token(data=token_data.dict())
-    response.set_cookie(key="access_token", value=f"Bearer {access_token}")
-    
     result = TokenOut(access_token=access_token, token_type="bearer")
     return {
         "msg": "User logged in successfully",
