@@ -1,5 +1,16 @@
 from sqlalchemy import Column, Integer, String, Float, Text, ForeignKey
+from sqlalchemy.orm import relationship
 from app.core.database.base import Base
+
+
+class RoomAmenities(Base):
+    id = Column(Integer, primary_key=True, index=True)
+
+    room_id = Column(ForeignKey("room.id"))
+    amenity_id = Column(ForeignKey("amenty.id"))
+
+    room = relationship("Room", backref="room_amenity")
+    amenity = relationship("Amenty", backref="room_amenity")
 
 
 class Room(Base):
@@ -20,12 +31,12 @@ class Room(Base):
     room_type = Column(ForeignKey("category.id"), nullable=False)
     host_id = Column(ForeignKey("user.id"), nullable=False)
 
+    category = relationship("Category", backref="rooms")
+    host = relationship("User", backref="rooms")
+    amenities = relationship("Amenty", backref="rooms", secondary="roomamenities")
+    photos = relationship("Photo", backref="rooms")
 
-class RoomAmenities(Base):
-    id = Column(Integer, primary_key=True, index=True)
 
-    room_id = Column(ForeignKey("room.id"))
-    amenity_id = Column(ForeignKey("amenty.id"))
 
 
 class Photo(Base):

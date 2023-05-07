@@ -1,25 +1,41 @@
-# from app.core.service.base import BaseSqlAlchemyServiceWithLogging
-# from .repo import RoleRepo
+from logging import Logger
+from sqlalchemy.orm import Session
+from app.core.service.base import BaseService
+from app.core.exceptions.service import ServiceException
+from .repo import RoomAmenitiesRepo, RoomRepo, PhotoRepo
+from .schema import RoomCreate, PhotoDb, RoomAmenityDb
 
+class RoomService(BaseService):
+    def __init__(self, room_repo: RoomRepo, amenity_repo: RoomAmenitiesRepo, photo_repo: PhotoRepo, logger: Logger) -> None:
+        self.room_repo = room_repo
+        self.amenity_repo = amenity_repo
+        self.photo_repo = photo_repo
+        self.logger = logger
 
-# class RoleService(BaseSqlAlchemyServiceWithLogging[RoleRepo]):
-#     async def create_role(self, db_session, obj_in):
-#         obj = await self.repo.create(db_session, obj_in)
-#         await db_session.commit()
-#         return obj
+    async def create_room(self, db_session: Session, room_in: RoomCreate):
+        amenities_in = room_in.amenities
+        photos_in = room_in.photos
 
-#     async def get_role(self, db_session, id):
-#         return await self.repo.get(db_session, id)
+        try:
+            room = await self.room_repo.create(session=db_session, obj_in=room_in.dict(exclude={"amenities", "photos"}))
 
-#     async def get_all_roles(self, db_session):
-#         return await self.repo.get_all(db_session)
+            for photo in photos_in:
+                photo_db = PhotoDb(**{**photo.dict(), "room_id":room.id})
+                await self.photo_repo.create(session=db_session, obj_in=photo_db.dict())    
+
+            for amenity_id in amenities_in:
+                amenity_db = RoomAmenityDb(amenity_id=amenity_id, room_id=room.id)
+                await self.amenity_repo.create(db_session, amenity_db)   
+
+            await db_session.commit()
+        except Exception as e:
+            await db_session.rollback()
+            raise ServiceException(str(e))
+        
+    async def get_room_detail(self, db_session, id: int):
+        return await self.room_repo.get(db_session, id=id)
     
-#     async def update_role(self, db_session, id, obj_in):
-#         obj = await self.repo.update(db_session, id, obj_in)
-#         await db_session.commit()
-#         return obj
+    async def get_rooms(self, db_session: Session):
+        return await self.room_repo.list(db_session)
 
-#     async def delete_role(self, db_session, id):
-#         await self.repo.delete(db_session, id=id)
-#         await db_session.commit()
-    
+        

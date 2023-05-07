@@ -1,59 +1,50 @@
-# from sqlalchemy.exc import IntegrityError
+from sqlalchemy import select, func, and_
+from sqlalchemy.orm import selectinload, contains_eager
+from app.core.repo.base import BaseSqlalchemyRepo
+from app.core.exceptions.repo import RepoException
+from .models import Room, RoomAmenities, Photo
 
-# from app.core.repo.base import BaseSqlalchemyRepo
-# from app.core.exceptions.repo import RepoException
-# from .models import Role
+
+class PhotoRepo(BaseSqlalchemyRepo):
+    model = Photo
 
 
-# class RoleRepo(BaseSqlalchemyRepo):
-#     model = Role
+class RoomAmenitiesRepo(BaseSqlalchemyRepo):
+    model = RoomAmenities
 
-#     async def create(self, db_session, obj_in):
-#         """
-#             Create role
-#         """
-#         try:
-#             return await super().create(db_session, obj_in)
-#         except IntegrityError as e:
-#             raise RepoException("Role title must be unique", e)
 
-#     async def get(self, db_session, id):
-#         """
-#             Get role by id
-#         """
-#         obj = await super().get(db_session, id)
+class RoomRepo(BaseSqlalchemyRepo):
+    model = Room
 
-#         if not obj:
-#             raise RepoException("Role not found", None, status=404)
-#         return obj
+    async def get(self, session, id: int):
+         return await super().get(session, id)
 
-#     async def get_all(self, db_session):
-#         """
-#             Get all roles
-#         """
-#         return await super().list(db_session)
-    
-#     async def update(self, db_session, id, obj_in):
-#         """
-#             Update role by id
-#         """
-#         db_obj = await self.get(db_session, id)
+    async def get(self, session, id: int):
+            stmt = select(self.model)\
+                        .options(selectinload(self.model.host))\
+                        .options(selectinload(self.model.category))\
+                        .options(selectinload(self.model.photos))\
+                        .options(selectinload(self.model.amenities))\
+                        .where(self.model.id == id)
+            result = await session.execute(stmt)
+            obj = result.scalars().one_or_none()
+            if not obj:
+                 raise RepoException("Room not found")
+            
+            return obj
+
+    async def list(self, session):
+        subq = (
+            select(
+                func.min(Photo.id).label('photo_id'),
+                Photo.room_id
+            )
+            .group_by(Photo.room_id)
+        ).subquery()
         
-#         if not db_obj:
-#             raise RepoException("Role not found", None, status=404)
-        
-#         try:
-#             return await super().update(db_session, db_obj, obj_in)
-#         except IntegrityError as e:
-#                 raise RepoException("Role title must be unique", e)
-
-#     async def delete(self, db_session, id):
-#         """
-#             Delete role by id
-#         """
-#         db_obj = await self.get(db_session, id=id)
-        
-#         if not db_obj:
-#             raise RepoException("Role not found", None, status=404)
-        
-#         return await super().delete(db_session, id=id)
+        stmt = select(self.model)\
+                    .options(contains_eager(Room.photos))\
+                    .join(subq, and_(self.model.id == subq.c.room_id))\
+                    .join(Photo, and_(subq.c.photo_id == Photo.id))
+        result = await session.execute(stmt)
+        return result.unique().scalars().all()

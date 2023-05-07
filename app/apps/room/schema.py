@@ -1,17 +1,69 @@
-# from pydantic import BaseModel
+from pydantic import BaseModel
+from typing import List
+from ..user.schema import UserOut
+from ..category.schema import CategoryOut
+from ..amenty.schema import AmentyOut
 
 
-# class RoleCreate(BaseModel):
-#     title: str
+class RoomAmenityDb(BaseModel):
+    amenity_id: int
+    room_id: int
 
 
-# class RoleUpdate(BaseModel):
-#     title: str
+class PhotoCreate(BaseModel):
+    url: str
 
 
-# class RoleOut(BaseModel):
-#     id: int
-#     title: str
+class PhotoDb(BaseModel):
+    url: str
+    room_id: int
 
-#     class Config:
-#         orm_mode = True
+
+class PhotoOut(BaseModel):
+    id: int
+    url: str
+
+    class Config:
+        orm_mode = True
+
+
+class RoomCreate(BaseModel):
+    price: float
+    room_count: float
+    bed_count: float
+    max_guest_count: float
+    title: str
+    description: str
+    longitude: float
+    latitude: float
+    address_state: str
+    address_city: str
+    address_city: str
+    address_zip_code: str
+    room_type: int
+    host_id: int
+    photos: List[PhotoCreate]
+    amenities: List[int]
+
+
+class RoomOut(BaseModel):
+    id: int
+    price: float
+    room_count: float
+    bed_count: float
+    max_guest_count: float
+    title: str
+    description: str
+    longitude: float
+    latitude: float
+    address_state: str
+    address_city: str
+    address_city: str
+    address_zip_code: str
+    category: CategoryOut
+    # host: UserOut
+    photos: List[PhotoOut]
+    amenities: List[AmentyOut]
+
+    class Config:
+        orm_mode = True
