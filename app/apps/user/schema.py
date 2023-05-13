@@ -42,6 +42,16 @@ class UserOut(BaseModel):
         orm_mode = True
 
 
+class UserRoomOut(BaseModel):
+    id: int
+    email: EmailStr
+    full_name: str
+    bio: str
+
+    class Config:
+        orm_mode = True
+
+
 class TokenDataIn(BaseModel):
     id: int
     email: EmailStr

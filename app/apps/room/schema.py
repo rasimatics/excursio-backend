@@ -1,7 +1,7 @@
 import json
 from pydantic import BaseModel
 from typing import List
-from ..user.schema import UserOut
+from ..user.schema import UserRoomOut
 from ..category.schema import CategoryOut
 from ..amenty.schema import AmentyOut
 
@@ -42,7 +42,6 @@ class RoomCreate(BaseModel):
     address_city: str
     address_zip_code: str
     room_type: int
-    host_id: int
     amenities: List[int]
 
     @classmethod
@@ -68,7 +67,7 @@ class RoomOut(BaseModel):
     address_city: str
     address_zip_code: str
     category: CategoryOut
-    # host: UserOut
+    host: UserRoomOut
     photos: List[PhotoOut]
     amenities: List[AmentyOut]
 

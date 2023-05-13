@@ -3,6 +3,7 @@ from typing import List
 from dependency_injector.wiring import inject, Provide
 from app.core.database.deps import get_db
 from app.core.response.base import Response
+from ..user.auth import get_current_user
 from .schema import RoomCreate, RoomOut
 from .container import RoomContainer
 
@@ -16,9 +17,10 @@ async def create_room(
     room: RoomCreate, 
     photos: List[UploadFile],
     db_session = Depends(get_db),
-    room_service = Depends(Provide[RoomContainer.room_service])
+    room_service = Depends(Provide[RoomContainer.room_service]),
+    user = Depends(get_current_user)
 ) -> Response:
-    await room_service.create_room(db_session, room, photos)
+    await room_service.create_room(db_session, room, photos, user.id)
     return {
         "msg": "Room created successfully",
         "result": None,

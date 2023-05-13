@@ -14,10 +14,12 @@ class RoomService(BaseService):
         self.photo_repo = photo_repo
         self.logger = logger
 
-    async def create_room(self, db_session: Session, room_in: RoomCreate, photos_in):
+    async def create_room(self, db_session: Session, room_in: RoomCreate, photos_in, user_id: int):
         amenities_in = room_in.amenities
         try:
-            room = await self.room_repo.create(session=db_session, obj_in=room_in.dict(exclude={"amenities", "photos"}))
+            room = await self.room_repo.create(
+                session=db_session, 
+                obj_in={**room_in.dict(exclude={"amenities", "photos"}), 'host_id': user_id})
 
             for photo in photos_in:
                 photo.filename = create_filename(photo.filename)
