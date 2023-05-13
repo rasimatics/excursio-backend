@@ -31,11 +31,13 @@ class Room(Base):
     room_type = Column(ForeignKey("category.id"), nullable=False)
     host_id = Column(ForeignKey("user.id"), nullable=False)
 
+    # one to many
     category = relationship("Category", backref="rooms")
     host = relationship("User", backref="rooms")
-    amenities = relationship("Amenty", backref="rooms", secondary="roomamenities")
     photos = relationship("Photo", backref="rooms")
 
+    # many to many
+    amenities = relationship("Amenty", backref="rooms", secondary="roomamenities")
 
 
 

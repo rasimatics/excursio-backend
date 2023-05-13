@@ -1,6 +1,8 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from fastapi.exceptions import RequestValidationError
 from starlette.middleware.cors import CORSMiddleware
+from os import makedirs
 
 from .core.config.settings import app_settings
 from .core.exceptions.repo import RepoException
@@ -45,6 +47,9 @@ def create_app():
         allow_methods=["*"],
         allow_headers=["*"]
     )
+
+    makedirs("media", exist_ok=True)
+    app.mount("/media", StaticFiles(directory=app_settings.MEDIA_FOLDER), name="media")
 
 
     return app

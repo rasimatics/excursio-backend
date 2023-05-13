@@ -1,3 +1,4 @@
+import json
 from pydantic import BaseModel
 from typing import List
 from ..user.schema import UserOut
@@ -42,8 +43,14 @@ class RoomCreate(BaseModel):
     address_zip_code: str
     room_type: int
     host_id: int
-    photos: List[PhotoCreate]
     amenities: List[int]
+
+    @classmethod
+    def validate(cls, value):
+        if isinstance(value, str):
+            return cls(**json.loads(value))
+        return super().validate(value)
+
 
 
 class RoomOut(BaseModel):

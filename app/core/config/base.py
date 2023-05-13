@@ -19,3 +19,4 @@ class BaseSettings(Settings):
     docs_url: str = "/docs"
     
     PREFIX: str = ""
+    MEDIA_FOLDER: str = "media"

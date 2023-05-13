@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, UploadFile
 from typing import List
 from dependency_injector.wiring import inject, Provide
 from app.core.database.deps import get_db
@@ -12,12 +12,13 @@ room_router = APIRouter(prefix="/rooms", tags=['Rooms',])
 
 @room_router.post("/", status_code=201)
 @inject
-async def create_role(
-    obj_in: RoomCreate,
+async def create_room(
+    room: RoomCreate, 
+    photos: List[UploadFile],
     db_session = Depends(get_db),
     room_service = Depends(Provide[RoomContainer.room_service])
 ) -> Response:
-    await room_service.create_room(db_session, obj_in)
+    await room_service.create_room(db_session, room, photos)
     return {
         "msg": "Room created successfully",
         "result": None,
