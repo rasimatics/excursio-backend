@@ -1,15 +1,15 @@
-# from dependency_injector import containers, providers
+from dependency_injector import containers, providers
 
-# from ...core.dependency.containers import CoreContainer
-# from .service import RoomDetailService
-# from .repo import RoomDetailRepo
+from ...core.dependency.containers import CoreContainer
+from .service import ReviewService
+from .repo import ReviewRepo
 
 
-# class RoomDetailContainer(containers.DeclarativeContainer):
-#     """
-#         RoomDetail dependencies
-#     """
-#     wiring_config = containers.WiringConfiguration(packages=["app.apps"])
+class ReviewContainer(containers.DeclarativeContainer):
+    """
+        Review dependencies
+    """
+    wiring_config = containers.WiringConfiguration(packages=["app.apps"])
 
-#     room_detail_repo = providers.Singleton(RoomDetailRepo)
-#     room_detail_service = providers.Singleton(RoomDetailService, repo=room_detail_repo, logger=CoreContainer.app_logger)
+    review_repo = providers.Singleton(ReviewRepo)
+    review_service = providers.Singleton(ReviewService, repo=review_repo, logger=CoreContainer.app_logger)

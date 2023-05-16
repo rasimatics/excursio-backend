@@ -11,8 +11,8 @@ class ReservationService(BaseSqlAlchemyServiceWithLogging[ReservationRepo]):
     async def get_reservation(self, db_session, id):
         return await self.repo.get(db_session, id)
 
-    async def get_all_reservations(self, db_session):
-        return await self.repo.get_all(db_session)
+    async def get_user_reservations(self, db_session, user_id):
+        return await self.repo.get_reservations_by_user_id(db_session, user_id)
     
     async def update_reservation(self, db_session, id, obj_in):
         obj = await self.repo.update(db_session, id, obj_in)

@@ -1,4 +1,5 @@
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import select
 
 from app.core.repo.base import BaseSqlalchemyRepo
 from app.core.exceptions.repo import RepoException
@@ -26,6 +27,11 @@ class ReservationRepo(BaseSqlalchemyRepo):
         if not obj:
             raise RepoException("Reservation not found", None, status=404)
         return obj
+    
+    async def get_reservations_by_user_id(self, db_session, user_id):
+        stmt = select(self.model).where(self.model.user_id == user_id)
+        result = await db_session.execute(stmt)
+        return result.scalars().all()
 
     async def get_all(self, db_session):
         """

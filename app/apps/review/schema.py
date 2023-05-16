@@ -1,24 +1,24 @@
-# from pydantic import BaseModel
-# from typing import List, Optional
+from pydantic import BaseModel
+from typing import Optional
 
 
-# class RoomDetailCreate(BaseModel):
-#     name: str
-#     icon: str
-#     description: Optional[str]
+class ReviewCreate(BaseModel):
+    room_id: int
+    stars: int
+    comment: Optional[str]
 
 
-# class RoomDetailUpdate(BaseModel):
-#     icon: Optional[str]
-#     name: Optional[str]
-#     description: Optional[str]
+class ReviewUpdate(BaseModel):
+    stars: Optional[int]
+    comment: Optional[str]
 
 
-# class RoomDetailOut(BaseModel):
-#     id: int
-#     name: str
-#     icon: Optional[str]
-#     description: Optional[str]
+class ReviewOut(BaseModel):
+    id: int
+    room_id: int
+    user_id: int
+    stars: int
+    comment: Optional[str]
 
-#     class Config:
-#         orm_mode = True
+    class Config:
+        orm_mode = True

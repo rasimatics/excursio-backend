@@ -30,9 +30,10 @@ async def create_reservation(
 @inject
 async def get_all_reservations(
     db_session = Depends(get_db),
-    reservation_service = Depends(Provide[ReservationContainer.reservation_service])
+    reservation_service = Depends(Provide[ReservationContainer.reservation_service]),
+    user = Depends(get_current_user)
 ) -> Response[List[ReservationOut]]:
-    result = await reservation_service.get_all_reservations(db_session)
+    result = await reservation_service.get_user_reservations(db_session, user.id)
     return {
         "msg": "Reservation list successfully",
         "result": result,
