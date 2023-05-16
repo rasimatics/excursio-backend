@@ -7,3 +7,4 @@ from ..amenty.models import *
 from ..detail.models import *
 from ..category.models import *
 from ..room.models import *
+from ..reservation.models import *

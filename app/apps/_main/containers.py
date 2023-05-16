@@ -6,6 +6,7 @@ from ..amenty.container import AmentyContainer
 from ..detail.container import RoomDetailContainer
 from ..category.container import CategoryContainer
 from ..room.container import RoomContainer
+from ..reservation.container import ReservationContainer
 
 
 class ApplicationContainer(containers.DeclarativeContainer):
@@ -18,3 +19,4 @@ class ApplicationContainer(containers.DeclarativeContainer):
     detail_provider = providers.Container(RoomDetailContainer)
     category_provider = providers.Container(CategoryContainer)
     room_provider = providers.Container(RoomContainer)
+    reservation_provider = providers.Container(ReservationContainer)

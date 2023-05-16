@@ -34,19 +34,6 @@ async def login(
     } 
 
 
-@auth_router.post("/logout")
-@inject
-async def logout(
-    response: FastAPIResponse,
-) -> Response:
-    response.delete_cookie("access_token")
-    return {
-        "msg": "User logged out successfully",
-        "result": None,
-        "is_success": True
-    } 
-
-
 @user_router.get("/me", status_code=201)
 @inject
 async def get_current_user(

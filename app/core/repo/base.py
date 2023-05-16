@@ -1,5 +1,6 @@
 from fastapi.encoders import jsonable_encoder
 from sqlalchemy import select, delete
+from pydantic import BaseModel
 
 class BaseRepo:
     pass
@@ -9,8 +10,9 @@ class BaseSqlalchemyRepo(BaseRepo):
     model = None
 
     async def create(self, session, obj_in):
-        obj_in_dict = jsonable_encoder(obj_in)
-        db_obj = self.model(**obj_in_dict)
+        if isinstance(obj_in, BaseModel):
+            obj_in = obj_in.dict()
+        db_obj = self.model(**obj_in)
         session.add(db_obj)
         await session.flush()
         await session.refresh(db_obj)

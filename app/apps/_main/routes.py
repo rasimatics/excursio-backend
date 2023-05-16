@@ -7,6 +7,7 @@ from ..amenty.controller import amenty_router
 from ..detail.controller import room_detail_router
 from ..category.controller import category_router
 from ..room.controller import room_router
+from ..reservation.controller import reservation_router
 
 """
     Include all apps routers
@@ -20,3 +21,4 @@ router.include_router(amenty_router)
 router.include_router(room_detail_router)
 router.include_router(category_router)
 router.include_router(room_router)
+router.include_router(reservation_router)
