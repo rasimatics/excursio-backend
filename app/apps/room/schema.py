@@ -51,7 +51,6 @@ class RoomCreate(BaseModel):
         return super().validate(value)
 
 
-
 class RoomOut(BaseModel):
     id: int
     price: float
@@ -70,6 +69,17 @@ class RoomOut(BaseModel):
     host: UserRoomOut
     photos: List[PhotoOut]
     amenities: List[AmentyOut]
+
+    class Config:
+        orm_mode = True
+
+
+class ReservationRoomOut(BaseModel):
+    id: int
+    price: float
+    title: str
+    description: str
+    photos: List[PhotoOut]
 
     class Config:
         orm_mode = True

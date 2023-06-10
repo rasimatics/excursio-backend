@@ -18,6 +18,11 @@ class ReservationService(BaseSqlAlchemyServiceWithLogging[ReservationRepo]):
         obj = await self.repo.update(db_session, id, obj_in)
         await db_session.commit()
         return obj
+    
+    async def cancel_reservation(self, db_session, id, user_id):
+        obj = await self.repo.delete(db_session, id, user_id)
+        await db_session.commit()
+        return obj
 
     async def delete_reservation(self, db_session, id):
         await self.repo.delete(db_session, id=id)

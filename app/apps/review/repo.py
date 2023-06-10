@@ -52,13 +52,9 @@ class ReviewRepo(BaseSqlalchemyRepo):
         except IntegrityError as e:
                 raise RepoException("Review title must be unique", e)
 
-    async def delete(self, db_session, id):
+    async def delete(self, db_session, id, user_id):
         """
             Delete review by id
         """
-        db_obj = await self.get(db_session, id=id)
-        
-        if not db_obj:
-            raise RepoException("Review not found", None, status=404)
-        
+        await self.get(db_session, id=id) 
         return await super().delete(db_session, id=id)

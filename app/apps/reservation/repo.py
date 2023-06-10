@@ -1,8 +1,10 @@
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import select
+from sqlalchemy import select, func, and_
+from sqlalchemy.orm import selectinload, contains_eager
 
 from app.core.repo.base import BaseSqlalchemyRepo
 from app.core.exceptions.repo import RepoException
+from ..room.models import Photo, Room
 from .models import Reservation
 
 
@@ -29,7 +31,21 @@ class ReservationRepo(BaseSqlalchemyRepo):
         return obj
     
     async def get_reservations_by_user_id(self, db_session, user_id):
-        stmt = select(self.model).where(self.model.user_id == user_id)
+        subq = (
+            select(
+                func.min(Photo.id).label('photo_id'),
+                Photo.room_id
+            )
+            .group_by(Photo.room_id)
+        ).subquery()
+        
+        stmt = select(self.model).select_from(Reservation)\
+            .options(selectinload(Reservation.room).selectinload(Room.photos))\
+            .join(Reservation.room) \
+            .join(Room.photos) \
+            .join(subq, and_(subq.c.photo_id == Photo.id))\
+            .where(self.model.user_id == user_id)
+        
         result = await db_session.execute(stmt)
         return result.scalars().all()
 
@@ -53,11 +69,13 @@ class ReservationRepo(BaseSqlalchemyRepo):
         except IntegrityError as e:
                 raise RepoException("Reservation title must be unique", e)
 
-    async def delete(self, db_session, id):
+    async def delete(self, db_session, id, user_id):
         """
             Delete reservation by id
         """
-        db_obj = await self.get(db_session, id=id)
+        stmt = select(self.model).where(and_(self.model.id == id, self.model.user_id == user_id))
+        result = await db_session.execute(stmt)
+        db_obj =  result.scalars().one_or_none()
         
         if not db_obj:
             raise RepoException("Reservation not found", None, status=404)
