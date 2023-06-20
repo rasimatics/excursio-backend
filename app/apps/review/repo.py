@@ -1,5 +1,6 @@
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from app.core.repo.base import BaseSqlalchemyRepo
 from app.core.exceptions.repo import RepoException
 from .models import Review
@@ -18,7 +19,7 @@ class ReviewRepo(BaseSqlalchemyRepo):
             raise RepoException("Review name must be unique", e)
         
     async def get_review_by_room_id(self, db_session, room_id):
-        stmt = select(self.model).where(self.model.room_id == room_id)
+        stmt = select(self.model).options(selectinload(self.model.user)).where(self.model.room_id == room_id)
         result = await db_session.execute(stmt)
         return result.scalars().all()
 

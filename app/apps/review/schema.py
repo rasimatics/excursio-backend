@@ -13,10 +13,18 @@ class ReviewUpdate(BaseModel):
     comment: Optional[str]
 
 
+class UserInReview(BaseModel):
+    id: int
+    full_name: str
+    avatar: Optional[str]
+
+    class Config:
+        orm_mode = True
+
 class ReviewOut(BaseModel):
     id: int
     room_id: int
-    user_id: int
+    user: UserInReview
     stars: int
     comment: Optional[str]
 
