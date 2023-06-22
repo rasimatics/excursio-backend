@@ -1,5 +1,6 @@
 from pydantic import BaseModel, validator
 from datetime import date
+from typing import Optional
 
 from ..room.schema import ReservationRoomOut
 
@@ -20,8 +21,8 @@ class ReservationCreate(BaseModel):
 
 class ReservationOut(BaseModel):
     id: int
-    check_in: date
-    check_out: date
+    check_in: Optional[date]
+    check_out: Optional[date]
     price: float
     room: ReservationRoomOut
     user_id: int
