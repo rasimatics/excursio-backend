@@ -6,8 +6,8 @@ from ..room.schema import ReservationRoomOut
 
 
 class ReservationCreate(BaseModel):
-    check_in: date
-    check_out: date
+    check_in: Optional[date]
+    check_out: Optional[date]
     price: float
     room_id: int
 
