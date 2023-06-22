@@ -1,6 +1,6 @@
 import json
 from pydantic import BaseModel
-from typing import List
+from typing import List, Optional
 from datetime import date
 from ..user.schema import UserRoomOut
 from ..category.schema import CategoryOut
@@ -54,8 +54,8 @@ class RoomCreate(BaseModel):
 
 class ReservationInRoom(BaseModel):
     id: int
-    check_in: date
-    check_out: date
+    check_in: Optional[date]
+    check_out: Optional[date]
 
     class Config:
         orm_mode = True
