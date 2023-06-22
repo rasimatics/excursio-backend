@@ -7,7 +7,6 @@ class ReviewService(BaseSqlAlchemyServiceWithLogging[ReviewRepo]):
         obj_in={**obj_in.dict(), "user_id": user_id}
         obj = await self.repo.create(db_session, obj_in)
         await db_session.commit()
-        return obj
 
     async def get_review(self, db_session, id):
         return await self.repo.get(db_session, id)

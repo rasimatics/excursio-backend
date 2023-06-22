@@ -18,11 +18,11 @@ async def create_review(
     db_session = Depends(get_db),
     review_service = Depends(Provide[ReviewContainer.review_service]),
     user = Depends(get_current_user)
-) -> Response[ReviewOut]:
-    result = await review_service.create_review(db_session, obj_in, user.id)
+) -> Response:
+    await review_service.create_review(db_session, obj_in, user.id)
     return {
         "msg": "Review created successfully",
-        "result": result,
+        "result": None,
         "is_success": True
     }
 
