@@ -1,6 +1,7 @@
 import json
 from pydantic import BaseModel
 from typing import List
+from datetime import date
 from ..user.schema import UserRoomOut
 from ..category.schema import CategoryOut
 from ..amenty.schema import AmentyOut
@@ -51,6 +52,14 @@ class RoomCreate(BaseModel):
         return super().validate(value)
 
 
+class ReservationInRoom(BaseModel):
+    id: int
+    check_in: date
+    check_out: date
+
+    class Config:
+        orm_mode = True
+
 class RoomOut(BaseModel):
     id: int
     price: float
@@ -69,6 +78,7 @@ class RoomOut(BaseModel):
     host: UserRoomOut
     photos: List[PhotoOut]
     amenities: List[AmentyOut]
+    reservations: List[ReservationInRoom]
 
     class Config:
         orm_mode = True

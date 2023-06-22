@@ -25,6 +25,7 @@ class RoomRepo(BaseSqlalchemyRepo):
                         .options(selectinload(self.model.category))\
                         .options(selectinload(self.model.photos))\
                         .options(selectinload(self.model.amenities))\
+                        .options(selectinload(self.model.reservations))\
                         .where(self.model.id == id)
             result = await session.execute(stmt)
             obj = result.scalars().one_or_none()
