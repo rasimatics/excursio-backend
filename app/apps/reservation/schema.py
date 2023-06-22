@@ -15,6 +15,7 @@ class ReservationCreate(BaseModel):
     def check_date(cls, check_out, values):
         if check_out < values['check_in']:
             raise ValueError("Çıxış tarixi başlanğıc tarixdən sonra olmalıdır!")
+        return check_out
 
 
 
